@@ -1,5 +1,68 @@
-body {
+* {
   margin: 0;
   padding: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-size: 62.5%;
   font-family: sans-serif;
 }
+
+.App {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+  
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 60px;
+}
+
+.App-header {
+  text-align: center;
+  background-color: #222;
+  height: 100px;
+  padding: 20px;
+  width: 100%;
+  color: white;
+  margin: 0 0 3.0rem 0;
+}
+
+.App-header h2 {
+  font-size: 1.8rem;
+}
+
+.groceryList {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  width: 600px;
+}
+
+.groceryList ul {
+  width: 100%;
+}
+
+.category {
+  list-style: none;
+  font-size: 1.8rem;
+}
+
+.item {
+  list-style: none;
+  font-size: 1.2rem;
+  text-indent: 1.0rem;
+}
+
+.item .checkbox {
+  float: right;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+  
