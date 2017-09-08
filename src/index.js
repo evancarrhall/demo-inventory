@@ -12,10 +12,7 @@ class App extends React.Component {
                 <img src={logo} className="App-logo" alt="logo" />
                 <h2>Grocery List Demo</h2>
             </div>
-            <div className="groceryList">
-                <input type="text" />
-                <GroceryTable grocery_items={GROCERY_ITEMS} />
-            </div>
+            <GroceryTable grocery_items={GROCERY_ITEMS} />
         </div>
 
     );
@@ -24,27 +21,56 @@ class App extends React.Component {
 
 class GroceryTable extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      search: "",
+    }
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.setState({search: e.target.value});
+  }
+
+  compareGroceryItems(first, second) {
+    if (first.category > second.category)
+      return 1;
+    if (first.category < second.category)
+      return -1;
+    return 0;
+  }
+
   render() {
     const grocery_items = this.props.grocery_items;
+    grocery_items.sort(this.compareGroceryItems);
+    const searchText = this.state.search;
+
     let currentCategories = {};
     let rows = [];
-
     for(const item of grocery_items) {
-      console.log(item.category);
-      if(!(item.category in currentCategories)) {
+
+      if(item.name.indexOf(searchText) !== -1 || searchText === null) {
+        if(!(item.category in currentCategories)) {
+          rows.push(
+            <GroceryCategory name={item.category} />
+          );
+          currentCategories[item.category] = true;
+        }
+  
         rows.push(
-          <GroceryCategory name={item.category} />
+          <GroceryItem name={item.name} />
         );
-        currentCategories[item.category] = true;
       }
 
-      rows.push(
-        <GroceryItem name={item.name} />
-      );
+
     }
 
     return(
-      <ul>{rows}</ul>
+      <div className="groceryList">
+        <input id="search" type="text" value={searchText} onChange={this.handleChange} />
+        <ul>{rows}</ul>
+      </div>
     );
   }
 }
@@ -84,6 +110,7 @@ const GROCERY_ITEMS = [
   {category: "Dairy", name: "1/2 gallon of milk"},
   {category: "Dairy", name: "1 small container low-fat cottage cheese"},
   {category: "Dairy", name: "1 container crumbled feta cheese"},
+  {category: "Bakery", name: "Naan flatbread"},
 ];
 
 
