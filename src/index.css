@@ -15,20 +15,36 @@ body {
   flex-flow: column;
   align-items: center;
 }
-  
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.reduxLogo {  
+  position: absolute;
+  top: 1px;
+  left: 17px;
+  height: 50px;
+  z-index: 1;
 }
 
 .App-header {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
   text-align: center;
   background-color: #222;
   height: 100px;
   padding: 20px 0;
   width: 100%;
   color: white;
-  margin: 0 0 3.0rem 0;
+}
+
+.App-header div {
+  position: relative;
 }
 
 .App-header h2 {
@@ -66,6 +82,7 @@ body {
   line-height: 2.0rem;
   text-align: center;
   width: 100%;
+  margin: 4.0rem 0 2.0rem 0;
 }
 
 @keyframes App-logo-spin {

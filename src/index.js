@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import logo from './logo.svg';
+import redux from './redux.png';
 
 class App extends React.Component {
   render() {
@@ -9,8 +10,11 @@ class App extends React.Component {
 
         <div className="App">
             <div className="App-header">
+              <div>
                 <img src={logo} className="App-logo" alt="logo" />
-                <h2>Grocery List Demo</h2>
+                <img src={redux} alt="redux" className="reduxLogo" alt="redux" />
+              </div>
+              <h2>Grocery List Demo</h2>
             </div>
             <GroceryTable grocery_items={GROCERY_ITEMS} />
         </div>
@@ -62,8 +66,6 @@ class GroceryTable extends React.Component {
           <GroceryItem name={item.name} />
         );
       }
-
-
     }
 
     return(
@@ -93,6 +95,10 @@ class GroceryItem extends React.Component {
     );
   }
 }
+
+
+// ------------------------
+
 
 const GROCERY_ITEMS = [
   {category: "Produce", name: "1 quart berries"},
