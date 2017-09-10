@@ -29,12 +29,27 @@ class GroceryTable extends React.Component {
     super(props);
     this.state = {
       search: "",
+      hiddenCategories: new Set(),
     }
     this.handleChange = this.handleChange.bind(this);
+    this.hideCategory = this.hideCategory.bind(this);
+    this.showCategory = this.showCategory.bind(this);
   }
 
   handleChange(e) {
     this.setState({search: e.target.value});
+  }
+
+  hideCategory(categoryName) {
+    const hiddenCategories = this.state.hiddenCategories;
+    hiddenCategories.add(categoryName);
+    this.setState({hiddenCategories: hiddenCategories})
+  }
+
+  showCategory(categoryName) {
+    const hiddenCategories = this.state.hiddenCategories;
+    hiddenCategories.delete(categoryName);
+    this.setState({hiddenCategories: hiddenCategories})
   }
 
   compareGroceryItems(first, second) {
@@ -47,26 +62,42 @@ class GroceryTable extends React.Component {
 
   render() {
     const grocery_items = this.props.grocery_items;
-    grocery_items.sort(this.compareGroceryItems);
     const searchText = this.state.search;
+    const hiddenCategories = this.state.hiddenCategories;
+
+    grocery_items.sort(this.compareGroceryItems);
 
     let currentCategories = {};
     let rows = [];
     for(const item of grocery_items) {
 
+    if(!(hiddenCategories.has(item.category))) {
+
       if(item.name.indexOf(searchText) !== -1 || searchText === null) {
         if(!(item.category in currentCategories)) {
           rows.push(
-            <GroceryCategory name={item.category} />
+            <GroceryCategory name={item.category} handleHideClick={this.hideCategory} />
           );
           currentCategories[item.category] = true;
         }
-  
         rows.push(
           <GroceryItem name={item.name} />
         );
       }
+
+    } else {
+
+      if(item.name.indexOf(searchText) !== -1 || searchText === null) {
+        if(!(item.category in currentCategories)) {
+          rows.push(
+            <GroceryCategoryHidden name={item.category} handleShowClick={this.showCategory} />
+          );
+          currentCategories[item.category] = true;
+        }
+      }
     }
+
+  }
 
     return(
       <div className="groceryList">
@@ -80,11 +111,28 @@ class GroceryTable extends React.Component {
 class GroceryCategory extends React.Component {
 
   render() {
+    const name = this.props.name;
+    const partial = this.props.handleHideClick;
+    const handleHideClick = function() { partial(name); }
+    
     return(
-      <li className="category">{this.props.name}</li>
+      <li className="category">{name}<p onClick={handleHideClick}>hide</p></li>
     );
   }
 }
+
+class GroceryCategoryHidden extends React.Component {
+  
+    render() {
+      const name = this.props.name;
+      const partial = this.props.handleShowClick;
+      const handleShowClick = function() { partial(name); }
+
+      return(
+        <li className="category">{name}<p onClick={handleShowClick}>show</p></li>
+      );
+    }
+  }
 
 
 class GroceryItem extends React.Component {
@@ -111,12 +159,12 @@ const GROCERY_ITEMS = [
   {category: "Produce", name: "2 bell peppers"},
   {category: "Produce", name: "2 sweet potatoes"},
   {category: "Produce", name: "6-8 ounces boneles chicken breast"},
-  {category: "Bakery", name: "Whole wheat bread"},
+  {category: "Bakery", name: "1 loaf whole wheat bread"},
   {category: "Dairy", name: "1 dozen eggs"},
   {category: "Dairy", name: "1/2 gallon of milk"},
   {category: "Dairy", name: "1 small container low-fat cottage cheese"},
   {category: "Dairy", name: "1 container crumbled feta cheese"},
-  {category: "Bakery", name: "Naan flatbread"},
+  {category: "Bakery", name: "1 package naan flatbread"},
 ];
 
 
