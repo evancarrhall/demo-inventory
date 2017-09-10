@@ -70,11 +70,12 @@ body {
 }
 
 .groceryList .category p {
+  display: flex;
+  align-items: center;
+  padding: 0 1.0rem 0 0.5rem;
   font-size: 0.9rem;
-  align-self: flex-start;
   color: #C4C4C4;
   font-style: italic;
-  margin: 0 0 0 0.6rem;
 }
 
 .groceryList .category p:hover {
