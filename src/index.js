@@ -57,6 +57,10 @@ class GroceryTable extends React.Component {
       return 1;
     if (first.category < second.category)
       return -1;
+    if (first.name > second.name)
+      return 1;
+    if (first.name < second.name)
+      return -1;
     return 0;
   }
 
