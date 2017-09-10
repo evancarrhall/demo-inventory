@@ -120,7 +120,7 @@ class GroceryCategory extends React.Component {
     const handleHideClick = function() { partial(name); }
     
     return(
-      <li className="category">{name}<p onClick={handleHideClick}>hide</p></li>
+      <li className="category">{name}<p onClick={handleHideClick}>{"<"}</p></li>
     );
   }
 }
@@ -133,7 +133,7 @@ class GroceryCategoryHidden extends React.Component {
       const handleShowClick = function() { partial(name); }
 
       return(
-        <li className="category">{name}<p onClick={handleShowClick}>show</p></li>
+        <li className="category">{name}<p onClick={handleShowClick}>{">"}</p></li>
       );
     }
   }
