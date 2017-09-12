@@ -82,6 +82,7 @@ class FilterableInventoryTable extends React.Component {
         const department_component = <Department 
           name={currentDepartmentName}
           items={currentDepartmentItems}
+          searchText={searchText}
           isCollapsed={this.isCollapsed(currentDepartmentName)}
           handleCollapseClick={this.handleCollapseClick}
         />
@@ -100,6 +101,7 @@ class FilterableInventoryTable extends React.Component {
         const department_component = <Department 
           name={currentDepartmentName}
           items={currentDepartmentItems}
+          searchText={searchText}
           isCollapsed={this.isCollapsed(currentDepartmentName)}
           handleCollapseClick={this.handleCollapseClick}
         />
@@ -122,24 +124,24 @@ class Department extends React.Component {
   render() {
     const name = this.props.name;
     const items = this.props.items;
+    const searchText = this.props.searchText;
     const isCollapsed = this.props.isCollapsed;
 
     let collapseToken = "<";
     let itemList = null;
     if(!isCollapsed) {
-      // build Item components and put them into itemList
       collapseToken = ">";
+      // build Item components and push to itemList
       const rows = [];
       for(const item of items) {
-        rows.push(
-          <InventoryItem item={item} />
-        );
+        if(searchText !== null && item.name.toUpperCase().indexOf(searchText.toUpperCase()) !== -1)
+          rows.push(<InventoryItem item={item} />);
       }
       itemList = <ul>{rows}</ul>;
     }
 
     const partial = this.props.handleCollapseClick;
-    const handleCollapseClick = function() { partial(name); }
+    const handleCollapseClick = () => partial(name);
 
     return(
       <div className="department">
