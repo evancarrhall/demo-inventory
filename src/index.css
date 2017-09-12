@@ -62,23 +62,30 @@ body {
   width: 100%;
 }
 
-.groceryList .category {
+.department {
   display: flex;
+  flex-flow: column;
   list-style: none;
   font-size: 1.8rem;
   padding: 1.0rem 0 0 0;
 }
 
-.groceryList .category p {
+.departmentHeader {
+  display: flex;
+}
+
+.departmentHeader h2 {
+  font-size: 1.6rem;
+  color: #333;
+}
+
+.departmentHeader .collapseButton {
   display: flex;
   align-items: center;
   padding: 0 1.0rem 0 0.5rem;
   font-size: 0.9rem;
   color: #C4C4C4;
   font-style: italic;
-}
-
-.groceryList .category p:hover {
   cursor: pointer;
 }
 

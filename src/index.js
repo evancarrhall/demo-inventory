@@ -12,50 +12,50 @@ class App extends React.Component {
             <div className="App-header">
               <div>
                 <img src={logo} className="App-logo" alt="logo" />
-                <img src={redux} alt="redux" className="reduxLogo" alt="redux" />
+                <img src={redux} className="reduxLogo" alt="redux" />
               </div>
-              <h2>Grocery List Demo</h2>
+              <h2>React/Redux Inventory Demo</h2>
             </div>
-            <GroceryTable grocery_items={GROCERY_ITEMS} />
+            <FilterableInventoryTable items={INVENTORY_ITEMS} />
         </div>
 
     );
   }
 }
 
-class GroceryTable extends React.Component {
+class FilterableInventoryTable extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       search: "",
-      hiddenCategories: new Set(),
+      collapsedDepartments: new Set(),
     }
-    this.handleChange = this.handleChange.bind(this);
-    this.hideCategory = this.hideCategory.bind(this);
-    this.showCategory = this.showCategory.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleCollapseClick = this.handleCollapseClick.bind(this);
   }
 
-  handleChange(e) {
+  handleSearchChange(e) {
     this.setState({search: e.target.value});
   }
 
-  hideCategory(categoryName) {
-    const hiddenCategories = this.state.hiddenCategories;
-    hiddenCategories.add(categoryName);
-    this.setState({hiddenCategories: hiddenCategories})
+  handleCollapseClick(departmentName) {
+    let collapsedDepartments = this.state.collapsedDepartments;
+    collapsedDepartments.has(departmentName) ?
+      collapsedDepartments.delete(departmentName) : collapsedDepartments.add(departmentName);
+    
+    this.setState({collapsedDepartments: collapsedDepartments});
   }
 
-  showCategory(categoryName) {
-    const hiddenCategories = this.state.hiddenCategories;
-    hiddenCategories.delete(categoryName);
-    this.setState({hiddenCategories: hiddenCategories})
+  isCollapsed(departmentName) {
+    const collapsedDepartments = this.state.collapsedDepartments;
+    return collapsedDepartments.has(departmentName) ? true : false;
   }
 
-  compareGroceryItems(first, second) {
-    if (first.category > second.category)
+  inventorySorter(first, second) {
+    if (first.department > second.department)
       return 1;
-    if (first.category < second.category)
+    if (first.department < second.department)
       return -1;
     if (first.name > second.name)
       return 1;
@@ -65,85 +65,99 @@ class GroceryTable extends React.Component {
   }
 
   render() {
-    const grocery_items = this.props.grocery_items;
+    const items = this.props.items;
     const searchText = this.state.search;
-    const hiddenCategories = this.state.hiddenCategories;
 
-    grocery_items.sort(this.compareGroceryItems);
+    items.sort(this.inventorySorter);
 
-    let currentCategories = {};
-    let rows = [];
-    for(const item of grocery_items) {
+    let currentDepartmentName = items[0].department;
+    let currentDepartmentItems = [];
+    let departments = [];
 
-    if(!(hiddenCategories.has(item.category))) {
+    // group items by department and pass them down as props to Department components
+    for(const item of items) {
 
-      if(item.name.indexOf(searchText) !== -1 || searchText === null) {
-        if(!(item.category in currentCategories)) {
-          rows.push(
-            <GroceryCategory name={item.category} handleHideClick={this.hideCategory} />
-          );
-          currentCategories[item.category] = true;
-        }
-        rows.push(
-          <GroceryItem name={item.name} />
-        );
+      if(currentDepartmentName !== item.department) {
+        // push a complete Department component to departments list
+        const department_component = <Department 
+          name={currentDepartmentName}
+          items={currentDepartmentItems}
+          isCollapsed={this.isCollapsed(currentDepartmentName)}
+          handleCollapseClick={this.handleCollapseClick}
+        />
+
+        departments.push(department_component);
+        currentDepartmentName = item.department;
+        currentDepartmentItems = [item];
+
+      } else {
+        // push item to department
+        currentDepartmentItems.push(item);
+      }
+      
+      if (items.indexOf(item) === items.length-1 && currentDepartmentName === item.department) {
+        // corner case for last item in items
+        const department_component = <Department 
+          name={currentDepartmentName}
+          items={currentDepartmentItems}
+          isCollapsed={this.isCollapsed(currentDepartmentName)}
+          handleCollapseClick={this.handleCollapseClick}
+        />
+        departments.push(department_component); 
       }
 
-    } else {
-
-      if(item.name.indexOf(searchText) !== -1 || searchText === null) {
-        if(!(item.category in currentCategories)) {
-          rows.push(
-            <GroceryCategoryHidden name={item.category} handleShowClick={this.showCategory} />
-          );
-          currentCategories[item.category] = true;
-        }
-      }
     }
-
-  }
 
     return(
       <div className="groceryList">
-        <input id="search" type="text" value={searchText} onChange={this.handleChange} />
-        <ul>{rows}</ul>
+        <input id="search" type="text" value={searchText} onChange={this.handleSearchChange} />
+        <ul>{departments}</ul>
       </div>
     );
   }
 }
 
-class GroceryCategory extends React.Component {
+class Department extends React.Component {
 
   render() {
     const name = this.props.name;
-    const partial = this.props.handleHideClick;
-    const handleHideClick = function() { partial(name); }
-    
+    const items = this.props.items;
+    const isCollapsed = this.props.isCollapsed;
+
+    let collapseToken = "<";
+    let itemList = null;
+    if(!isCollapsed) {
+      // build Item components and put them into itemList
+      collapseToken = ">";
+      const rows = [];
+      for(const item of items) {
+        rows.push(
+          <InventoryItem item={item} />
+        );
+      }
+      itemList = <ul>{rows}</ul>;
+    }
+
+    const partial = this.props.handleCollapseClick;
+    const handleCollapseClick = function() { partial(name); }
+
     return(
-      <li className="category">{name}<p onClick={handleHideClick}>{"<"}</p></li>
+      <div className="department">
+        <div className="departmentHeader">
+          <h2>{name}</h2>
+          <div className="collapseButton" onClick={handleCollapseClick}>{collapseToken}</div>
+        </div>
+        {itemList}
+      </div>
     );
   }
 }
 
-class GroceryCategoryHidden extends React.Component {
-  
-    render() {
-      const name = this.props.name;
-      const partial = this.props.handleShowClick;
-      const handleShowClick = function() { partial(name); }
-
-      return(
-        <li className="category">{name}<p onClick={handleShowClick}>{">"}</p></li>
-      );
-    }
-  }
-
-
-class GroceryItem extends React.Component {
+class InventoryItem extends React.Component {
 
   render() {
     return(
-      <li className="item">{this.props.name}<input className="checkbox" type="checkbox" /></li>
+      <li className="item">{this.props.item.name}</li>
     );
   }
 }
@@ -152,23 +166,24 @@ class GroceryItem extends React.Component {
 // ------------------------
 
 
-const GROCERY_ITEMS = [
-  {category: "Produce", name: "1 quart berries"},
-  {category: "Produce", name: "2 lemons"},
-  {category: "Produce", name: "2 limes"},
-  {category: "Produce", name: "1 melon"},
-  {category: "Produce", name: "4 pieces oranges/apples/pears"},
-  {category: "Produce", name: "1 bunch broccoli"},
-  {category: "Produce", name: "1 bunch kale"},
-  {category: "Produce", name: "2 bell peppers"},
-  {category: "Produce", name: "2 sweet potatoes"},
-  {category: "Produce", name: "6-8 ounces boneles chicken breast"},
-  {category: "Bakery", name: "1 loaf whole wheat bread"},
-  {category: "Dairy", name: "1 dozen eggs"},
-  {category: "Dairy", name: "1/2 gallon of milk"},
-  {category: "Dairy", name: "1 small container low-fat cottage cheese"},
-  {category: "Dairy", name: "1 container crumbled feta cheese"},
-  {category: "Bakery", name: "1 package naan flatbread"},
+const INVENTORY_ITEMS = [
+  {department: "Sporting Goods", name: "Football", price: 16.99, stock: 23},
+  {department: "Sporting Goods", name: "Baseball", price: 16.99, stock: 15},
+  {department: "Sporting Goods", name: "Rugby Ball", price: 16.99, stock: 13},
+  {department: "Sporting Goods", name: "Excercise Ball", price: 16.99, stock: 18},
+  {department: "Sporting Goods", name: "Hockey Stick", price: 16.99, stock: 8},
+  {department: "Sporting Goods", name: "Hockey Puck", price: 16.99, stock: 22},
+  {department: "Footwear", name: "Yeezy Boost 350 \"Zebra\"", price: 16.99, stock: 0},
+  {department: "Footwear", name: "Yeezy 750 Boost \"Core Black\"", price: 16.99, stock: 1},
+  {department: "Footwear", name: "Yeezy 350 Boost \"Turtledove\"", price: 16.99, stock: 0},
+  {department: "Apparel", name: "Space Dye Legend Hoodie", price: 16.99, stock: 9},
+  {department: "Apparel", name: "Sportswear PO Fleece Hoodie", price: 16.99, stock: 9},
+  {department: "Apparel", name: "Therma Full Zip Hoodie", price: 16.99, stock: 8},
+  {department: "Apparel", name: "Dry Logo Rainstorm Printed Hoodie", price: 16.99, stock: 12},
+  {department: "Footwear", name: "Air Yeezy \"Zen Grey\"", price: 16.99, stock: 0},
+  {department: "Beverages", name: "Water", price: 16.99, stock: 0},
+  {department: "Beverages", name: "Gatorade Cool Ice", price: 16.99, stock: 0},
+  {department: "Water Bottles", name: "YETI 30 oz. Rambler Tumbler Cup", price: 16.99, stock: 0},
 ];
 
 
