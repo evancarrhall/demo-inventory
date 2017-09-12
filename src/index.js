@@ -3,21 +3,37 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import logo from './logo.svg';
 import redux from './redux.png';
+import { createStore } from 'redux'
+import inventoryApp from './reducers'
+import {
+  toggleDepartmentCollapse,
+  changeSearchText,
+} from './actions'
+import { 
+  connect,
+  Provider,
+} from 'react-redux'
 
 class App extends React.Component {
+  
   render() {
+
+    let store = createStore(inventoryApp);
+
     return (
 
-        <div className="App">
-            <div className="App-header">
-              <div>
-                <img src={logo} className="App-logo" alt="logo" />
-                <img src={redux} className="reduxLogo" alt="redux" />
+        <Provider store={store}>
+          <div className="App">
+              <div className="App-header">
+                <div>
+                  <img src={logo} className="App-logo" alt="logo" />
+                  <img src={redux} className="reduxLogo" alt="redux" />
+                </div>
+                <h2>React/Redux Inventory Demo</h2>
               </div>
-              <h2>React/Redux Inventory Demo</h2>
-            </div>
-            <FilterableInventoryTable items={INVENTORY_ITEMS} />
-        </div>
+              <FilterableInventoryTable items={INVENTORY_ITEMS} />
+          </div>
+        </Provider>
 
     );
   }
@@ -28,15 +44,19 @@ class FilterableInventoryTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: "",
+      searchText: "",
       collapsedDepartments: new Set(),
     }
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleCollapseClick = this.handleCollapseClick.bind(this);
   }
+  
+  getVisibleDepartments(items, collapsedDepartments) {
+    return items.filter(item => {collapsedDepartments.has(item.department)})
+  }
 
   handleSearchChange(e) {
-    this.setState({search: e.target.value});
+    this.setState({searchText: e.target.value});
   }
 
   handleCollapseClick(departmentName) {
@@ -65,8 +85,8 @@ class FilterableInventoryTable extends React.Component {
   }
 
   render() {
-    const items = this.props.items;
-    const searchText = this.state.search;
+    const items = this.getVisibleDepartments(this.props.items, this.state.collapsedDepartments);
+    const searchText = this.state.searchText;
 
     items.sort(this.inventorySorter);
 
@@ -187,6 +207,5 @@ const INVENTORY_ITEMS = [
   {department: "Beverages", name: "Gatorade Cool Ice", price: 16.99, stock: 0},
   {department: "Water Bottles", name: "YETI 30 oz. Rambler Tumbler Cup", price: 16.99, stock: 0},
 ];
-
 
 ReactDOM.render(<App />, document.getElementById('root'));
