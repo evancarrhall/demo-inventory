@@ -93,7 +93,7 @@ html, body {
 
 .item {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   list-style: none;
   padding-left: 2.0rem;
 }
@@ -111,14 +111,15 @@ html, body {
 }
 
 .item .itemPrice {
+  font-size: 1.8rem;
   font-family: monospace;
   margin-left: auto;
 }
 
 .item .itemStock {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #888888;
-  font-weight: 700;
+  font-weight: 400;
   text-indent: 0.8rem;
 }
 
