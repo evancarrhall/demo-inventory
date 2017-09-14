@@ -20,49 +20,35 @@ class InventoryTable extends React.Component {
         return 0;
     }
 
+    groupItemsByDepartment(arr, property = "department") {
+        // reduces an array of item objects into a dictionary of item arrays grouped by department
+        return arr.reduce(function(groupedItems, currentItem) {
+          if (!groupedItems[currentItem[property]])
+            groupedItems[currentItem[property]] = [];
+          groupedItems[currentItem[property]].push(currentItem);
+          return groupedItems;
+        }, {});
+    }
+
     render() {
         const items = this.props.items
         const searchText = this.props.searchText;
 
         items.sort(this.inventorySorter);
 
-        let currentDepartmentName = items[0].department;
-        let currentDepartmentItems = [];
         let departments = [];
 
-        // group items by department and pass them down as props to Department components
-        for(const item of items) {
-            
-            if(currentDepartmentName !== item.department) {
-                // push a complete Department component to departments list
-                const department_component = <Department 
-                    name={currentDepartmentName}
-                    items={currentDepartmentItems}
+        const groupedItems = this.groupItemsByDepartment(items);
+        for (let depName in groupedItems) {                
+            departments.push(
+                <Department 
+                    name={depName}
+                    items={groupedItems[depName]}
                     searchText={searchText}
-                    isCollapsed={this.isCollapsed(currentDepartmentName)}
+                    isCollapsed={this.isCollapsed(depName)}
                     toggleDepartmentCollapse={this.props.toggleDepartmentCollapse}
                 />
-
-                departments.push(department_component);
-                currentDepartmentName = item.department;
-                currentDepartmentItems = [item];
-
-            } else {
-                // push item to department
-                currentDepartmentItems.push(item);
-            }
-            
-            if (items.indexOf(item) === items.length-1 && currentDepartmentName === item.department) {
-                // corner case for last item in items
-                const department_component = <Department 
-                    name={currentDepartmentName}
-                    items={currentDepartmentItems}
-                    searchText={searchText}
-                    isCollapsed={this.isCollapsed(currentDepartmentName)}
-                    toggleDepartmentCollapse={this.props.toggleDepartmentCollapse}
-                />
-                departments.push(department_component); 
-            }
+            );
         }
 
         return(
