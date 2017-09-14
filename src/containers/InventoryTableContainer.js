@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { 
     toggleDepartmentCollapse,
-    changeSearchText } from '../actions/actions.js'
+    changeSearchText } from '../actions/index.js'
 import InventoryTable from '../components/InventoryTable.js'
 
 const mapStateToProps = state => {

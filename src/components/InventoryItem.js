@@ -4,7 +4,11 @@ class InventoryItem extends React.Component {
     
     render() {
         return(
-            <li className="item">{this.props.item.name}</li>
+            <li className="item">
+                <p className="itemName">{this.props.item.name}</p>
+                <p className="itemStock">{this.props.item.stock}</p>
+                <p className="itemPrice">{"$" + this.props.item.price}</p>
+            </li>
         );
     }
 }

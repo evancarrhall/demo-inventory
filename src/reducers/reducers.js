@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import {
     TOGGLE_DEPARTMENT_COLLAPSE,
-    CHANGE_SEARCH_TEXT,} from '../actions/actions.js'
+    CHANGE_SEARCH_TEXT,} from '../actions/index.js'
 
 function searchText(state = "", action) {
     switch (action.type) {

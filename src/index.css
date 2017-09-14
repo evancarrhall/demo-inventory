@@ -92,9 +92,10 @@ html, body {
 }
 
 .item {
+  display: flex;
+  align-items: center;
   list-style: none;
-  font-size: 1.4rem;
-  text-indent: 1.0rem;
+  padding-left: 2.0rem;
 }
 
 .item:hover {
@@ -103,6 +104,22 @@ html, body {
 
 .item .checkbox {
   float: right;
+}
+
+.item p {
+  font-size: 1.6rem;
+}
+
+.item .itemPrice {
+  font-family: monospace;
+  margin-left: auto;
+}
+
+.item .itemStock {
+  font-size: 1.2rem;
+  color: #888888;
+  font-weight: 700;
+  text-indent: 0.8rem;
 }
 
 #search {

@@ -17,7 +17,7 @@ const INVENTORY_ITEMS = [
   {department: "Sporting Goods", name: "Excercise Ball", price: 16.99, stock: 18},
   {department: "Sporting Goods", name: "Hockey Stick", price: 16.99, stock: 8},
   {department: "Sporting Goods", name: "Hockey Puck", price: 16.99, stock: 22},
-  {department: "Footwear", name: "Yeezy Boost 350 \"Zebra\"", price: 16.99, stock: 0},
+  {department: "Footwear", name: "Yeezy Boost 350 \"Zebra\"", price: 289.99, stock: 0},
   {department: "Footwear", name: "Yeezy 750 Boost \"Core Black\"", price: 16.99, stock: 1},
   {department: "Footwear", name: "Yeezy 350 Boost \"Turtledove\"", price: 16.99, stock: 0},
   {department: "Apparel", name: "Space Dye Legend Hoodie", price: 16.99, stock: 9},
