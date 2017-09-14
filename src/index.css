@@ -121,6 +121,7 @@ html, body {
   color: #888888;
   font-weight: 400;
   text-indent: 0.8rem;
+  user-select: none;
 }
 
 #search {
